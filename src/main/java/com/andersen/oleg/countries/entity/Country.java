@@ -31,4 +31,7 @@ public class Country {
     @OneToMany(mappedBy = "country", orphanRemoval = true)
     private List<City> cities = new ArrayList<>();
 
+    public Country(String name) {
+        this.name = name;
+    }
 }

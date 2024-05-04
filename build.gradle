@@ -25,12 +25,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.flywaydb:flyway-core'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'
+    testImplementation 'org.springframework.security:spring-security-test'
 
 }
 

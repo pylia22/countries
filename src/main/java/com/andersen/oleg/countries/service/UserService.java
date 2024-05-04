@@ -22,7 +22,4 @@ public class UserService implements UserDetailsService {
         return user.map(com.andersen.oleg.countries.service.UserDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
     }
-
-
-
 }

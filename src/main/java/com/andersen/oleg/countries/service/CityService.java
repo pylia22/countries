@@ -2,27 +2,25 @@ package com.andersen.oleg.countries.service;
 
 import com.andersen.oleg.countries.config.utils.LogoUtils;
 import com.andersen.oleg.countries.entity.City;
-import com.andersen.oleg.countries.entity.Logo;
+import com.andersen.oleg.countries.exception.CityNotFoundException;
 import com.andersen.oleg.countries.repository.CityRepository;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class CityService {
 
     private final CityRepository repository;
-    private final LogoService logoService;
 
-    public CityService(CityRepository repository, LogoService logoService) {
+    public CityService(CityRepository repository) {
         this.repository = repository;
-        this.logoService = logoService;
     }
 
     public Page<City> getAllCities(Pageable pageRequest) {
@@ -42,14 +40,19 @@ public class CityService {
     }
 
     @SneakyThrows
-    @Transactional
-    public void updateCity(Long id, String updatedCity, MultipartFile file) {
-        City city = repository.findById(id).orElseThrow(() -> new RuntimeException("not found city"));
-        Logo logo = logoService.saveLogo(id, file);
+    public boolean updateCity(Long id, String updatedCity, MultipartFile file) {
+        Optional<City> cityOptional = repository.findById(id);
 
+        if (cityOptional.isEmpty()) {
+            throw new CityNotFoundException(id);
+        }
+        City city = cityOptional.get();
         city.setName(updatedCity);
-        city.setLogo(logo);
 
+        if (file != null && !file.isEmpty()) {
+            city.setLogo(LogoUtils.compressImage(file.getBytes()));
+        }
         repository.save(city);
+        return true;
     }
 }

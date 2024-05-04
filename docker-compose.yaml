@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:13.1-alpine
+    ports:
+      - target: 5432
+        published: 5432
+    environment:
+      - POSTGRES_DB=andersen
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  spring-app:
+    image: docker-spring-boot-postgres:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: countries_app
+    ports:
+      - target: 8080
+        published: 8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/andersen
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+    depends_on:
+      - postgres

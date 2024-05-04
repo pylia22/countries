@@ -33,17 +33,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        String[] publicEndpoints = {"/cities", "/cities/list", "/cities/filter", "/cities/search"};
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/cities")
-                        .permitAll()
-                        .requestMatchers("/cities/list")
-                        .permitAll()
-                        .requestMatchers("/cities/filter")
-                        .permitAll()
-                        .requestMatchers("/cities/search")
+                        .requestMatchers(publicEndpoints)
                         .permitAll())
-                .authorizeHttpRequests(auth -> auth.requestMatchers(new AntPathRequestMatcher("/cities/edit/**"))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(new AntPathRequestMatcher("/cities/{id}/**"))
                         .hasRole("EDITOR")
                         .anyRequest()
                         .authenticated())
