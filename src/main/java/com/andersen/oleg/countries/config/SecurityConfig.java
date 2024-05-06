@@ -33,7 +33,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        String[] publicEndpoints = {"/cities", "/cities/list", "/cities/filter", "/cities/search"};
+        String[] publicEndpoints = {"/cities", "/cities/list", "/cities/filter", "/cities/search",
+                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicEndpoints)
