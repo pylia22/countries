@@ -145,7 +145,7 @@ public class CityControllerTest {
                         .file(file)
                         .param("city", cityName)
                         .with(request -> {
-                            request.setMethod("POST");
+                            request.setMethod("PUT");
                             return request;
                         }))
                 .andExpect(status().isForbidden());

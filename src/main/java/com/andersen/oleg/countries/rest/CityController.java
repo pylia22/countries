@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,9 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -70,7 +70,7 @@ public class CityController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved cities for specified country"),
             @ApiResponse(responseCode = "404", description = "No cities found for specified country")})
-    public ResponseEntity<List<City>> getAllByCountryName(@Parameter(name = "country name", example = "Germany")
+    public ResponseEntity<List<City>> getAllByCountryName(@Parameter(name = "countryName", example = "Germany")
                                                           @RequestParam String countryName) {
         log.info("Getting all cities for country: {}", countryName);
         List<City> cities = cityService.getAllByCountryName(countryName);
@@ -83,7 +83,7 @@ public class CityController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved cities for specified name"),
             @ApiResponse(responseCode = "404", description = "No cities found for specified name")})
-    public ResponseEntity<List<City>> searchByCityName(@Parameter(name = "city name", example = "London")
+    public ResponseEntity<List<City>> searchByCityName(@Parameter(name = "cityName", example = "London")
                                                        @RequestParam String cityName) {
         log.info("Searching for cities with name: {}", cityName);
         List<City> cities = cityService.searchCityByName(cityName);
@@ -95,16 +95,19 @@ public class CityController {
         return ResponseEntity.ok(cities);
     }
 
-    @PatchMapping(value = "/{id}/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('ROLE_EDITOR')")
     @Operation(summary = "edit city")
+    @SecurityRequirement(name = "basicAuth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "City has been successfully updated"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden to access"),
+            @ApiResponse(responseCode = "404", description = "City with provided id not found"),
             @ApiResponse(responseCode = "500", description = "Failed to update the city")})
-    public ResponseEntity<String> editCity(@PathVariable @Parameter(name = "city id", example = "1") Long id,
-                                           @RequestParam @Parameter(name = "city name", example = "Madrid") String city,
-                                           @RequestPart("logo") @Parameter(name = "city logo") MultipartFile file) {
+    public ResponseEntity<String> editCity(@PathVariable @Parameter(description = "id of the city to edit", example = "1") Long id,
+                                           @RequestParam @Parameter(name = "city", example = "Madrid") String city,
+                                           @RequestPart("logo") @Parameter(name = "logo") MultipartFile file) {
         boolean isUpdated = cityService.updateCity(id, city, file);
 
         if (isUpdated) {
