@@ -4,9 +4,10 @@ Countries is a Java application for displaying countries and their cities.
 
 ## Installation
 
-build the project and run docker compose command.
+build the project, open Docker Desktop and run docker compose command.
 
 ```bash
+./gradlew build -x test    
 docker compose up
 ```
 
@@ -14,7 +15,7 @@ docker compose up
 
 ### CityController Endpoints
 
-The CityController provides RESTful endpoints for managing city data within the application. Below are the available endpoints and their functionalities:
+The CityController provides RESTful endpoints for managing city data within the application. Below are the available endpoints and their functionalities. Please note the open-api documentation is available as well at http://localhost:8080/swagger-ui/index.html.
 
 ##  GET /cities: Retrieves a paginated list of all cities.
 
