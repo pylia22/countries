@@ -1,9 +1,9 @@
 services:
   postgres:
-    image: postgres:13.1-alpine
+    image: postgres:15-alpine
     ports:
       - target: 5432
-        published: 5432
+        published: 5433
     environment:
       - POSTGRES_DB=andersen
       - POSTGRES_USER=postgres
